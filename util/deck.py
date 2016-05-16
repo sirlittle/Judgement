@@ -45,13 +45,13 @@ class JudgementDeck(Deck):
         loc = 0
         for i in range(1,len(cards)):
             compCard = cards[i]
-            if winner.suit == compCard.suit && winner.rank < compCard.rank:
+            if winner.suit == compCard.suit and winner.rank < compCard.rank:
                 loc = i
                 winner = compCard
             elif compCard.suit == self.trumpSuit:
                 loc = i
                 winner = compCard
-        return players[i]
+        return i
 
 
 
