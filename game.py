@@ -1,10 +1,10 @@
-from Deck import *
-from Card import *
-
+from util.card import *
+from util.deck import *
+from util.player import *
 
 playGame = True
-deck = Deck()
-print(deck.deal())
+deck = JudgementDeck()
+players = [Player(i) for i in range(5)]
+
 while playGame:
     playGame = False
-print("done with game")
