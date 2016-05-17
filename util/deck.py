@@ -35,7 +35,7 @@ class JudgementDeck(Deck):
 
     def chooseTrump(self):
         card = self.deal(1)[0]
-        print("The trump is: " + str(card))
+        # print("The trump is: " + str(card))
         self.trump = card
         self.trumpSuit = card.suit
 
