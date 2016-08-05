@@ -1,6 +1,7 @@
 class Card:
     suits = ["Hearts", "Diamonds", "Spades", "Clubs"]
     ranks = [str(i) for i in range(2,11)] + ["Jack", "Queen", "King", "Ace"]
+    
     def __init__(self, suit, rank):
         self.suit = suit
         self.rank = rank

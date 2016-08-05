@@ -1,6 +1,7 @@
 from util.card import *
 import random
 
+# Representation of a simple deck of cards.
 class Deck:
     def __init__(self):
         self.deck = []
@@ -20,7 +21,8 @@ class Deck:
 
     def shuffle(self):
         random.shuffle(self.deck)
-
+        random.shuffle(self.deck)
+        random.shuffle(self.deck)
 
     def __str__(self):
         return str(self.deck)
@@ -28,6 +30,7 @@ class Deck:
     def __repr__(self):
         return str(self.deck)
 
+# A class extending a regular deck of cards to add in key aspects of Judgement
 class JudgementDeck(Deck):
     def __init__(self):
         Deck.__init__(self)

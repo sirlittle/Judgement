@@ -2,9 +2,11 @@ from util.card import *
 from util.deck import *
 from util.player import *
 
+# Returns the score of a given hand.
 def getScore(num):
     return (num+1)*10 + num
 
+# Simulates a single round of Judgement
 def round(players, numCards, deck, scores):
     predictions = {}
     sumPredicts = 0
@@ -38,31 +40,32 @@ def round(players, numCards, deck, scores):
             scores[player.name] += getScore(prediction)
         player.reset()
 
+# Runs a game loop
+def playGame(players):
+    playGame = True
+    scores = {player.name:0 for player in players}
+    for _ in range(1000):
+        for i in range(7):
+            deck = JudgementDeck()
+            numCards = 7-i
+            # print("starting round " + str(numCards))
+            # print("\n\n")
 
+            round(players, numCards, deck, scores)
+            # print("after round scores are: " + str(scores))
+            # print("\n\n")
+        for i in range(1,8):
+            deck = JudgementDeck()
+            numCards = i
+            # print("starting round " + str(numCards))
+            # print("\n\n")
+            round(players, numCards, deck, scores)
+            # print("after round scores are: " + str(scores))
+            # print("\n\n")
+        # print("Final scores are " + str(scores))
+        playGame = False
+    print("Final scores are " + str(scores))
 
-playGame = True
-players = [Player("Bob" + str(i)) for i in range(5)] + [AggressiveBot("IWIN")]# + [HumanPlayer("Salil")]
-scores = {player.name:0 for player in players}
-for _ in range(1000):
-    for i in range(7):
-        deck = JudgementDeck()
-        numCards = 7-i
-        # print("starting round " + str(numCards))
-        # print("\n\n")
-
-        round(players, numCards, deck, scores)
-        # print("after round scores are: " + str(scores))
-        # print("\n\n")
-    for i in range(1,8):
-        deck = JudgementDeck()
-        numCards = i
-        # print("starting round " + str(numCards))
-        # print("\n\n")
-        round(players, numCards, deck, scores)
-        # print("after round scores are: " + str(scores))
-        # print("\n\n")
-    # print("Final scores are " + str(scores))
-    playGame = False
-print("Final scores are " + str(scores))
+playGame([AggressiveBot("Bob" + str(i)) for i in range(5)] + [AggressiveBot("IWIN")])
 
 
