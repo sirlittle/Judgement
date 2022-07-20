@@ -46,23 +46,6 @@ export class JudgementDeck extends Deck {
     }
 }
 
-//     def chooseWinner(self, cards, players):
-//         card1 = cards[0]
-//         winner = card1
-//         loc = 0
-//         trumpSeen = winner.suit == self.trumpSuit
-//         for i in range(1,len(cards)):
-//             compCard = cards[i]
-//             if winner.suit == compCard.suit and winner.rank < compCard.rank:
-//                 loc = i
-//                 winner = compCard
-//             elif compCard.suit == self.trumpSuit and not trumpSeen:
-//                 loc = i
-//                 winner = compCard
-//         return loc, winner
-
-
-
 
 
 

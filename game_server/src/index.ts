@@ -2,10 +2,8 @@ import type { HttpFunction } from '@google-cloud/functions-framework/build/src/f
 import { JudgementDeck } from './objects/deck';
 import { Card } from './objects/card';
 import { Player } from './objects/player';
-import { start } from 'repl';
 
 export const simulateGames: HttpFunction = async (req, res) => {
-    
     let numberOfGames = 1;
     let numberOfPlayers = 5;
     if (req.body.numberOfGames && req.body.numberOfPlayers) {

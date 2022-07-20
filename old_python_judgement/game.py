@@ -46,7 +46,6 @@ def round(players, numCards, deck, scores, stats):
 
 # Runs a game loop
 def playGame(players, numTimes=100000):
-    playGame = True
     scores = {player.name:0 for player in players}
     stats = JudgementStats()
     for _ in range(numTimes):
@@ -68,7 +67,6 @@ def playGame(players, numTimes=100000):
             # print("after round scores are: " + str(scores))
             # print("\n\n")
         # print("Final scores are " + str(scores))
-        playGame = False
     stats.writeToCSV("dataRun1.csv")
     print("Final scores are " + str(scores))
 
