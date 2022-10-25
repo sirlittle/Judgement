@@ -38,6 +38,11 @@ interface RoundLogs {
     linearLogs: string[];
 }
 
+interface RoundResults {
+    scores: { [id: number]: number };
+    logs: RoundLogs[];
+}
+
 export const simulateGames: HttpFunction = async (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "GET, POST");
@@ -54,7 +59,7 @@ export const simulateGames: HttpFunction = async (req, res) => {
     numberOfGames = req.body.numberOfGames;
     numberOfPlayers = req.body.numberOfPlayers;
   }
-  const gameResults = await runGames(numberOfGames, numberOfPlayers);
+  const gameResults: RoundResults[][] = await runGames(numberOfGames, numberOfPlayers);
   res.status(200).send(gameResults);
 };
 
@@ -68,7 +73,7 @@ const runGames = async (numberOfGames: number, numberOfPlayers: number) => {
   }));
 };
 
-const runSingleGameOfGermanBridge = async (numberOfPlayers: number) => {
+const runSingleGameOfGermanBridge = async (numberOfPlayers: number): Promise<RoundResults[]> => {
   // create array of size number of players with unique ids
   const players: Player[] = Array.from(Array(numberOfPlayers), (_, i) => new Player(i));
   let scores: { [id: number]: number } = {};
