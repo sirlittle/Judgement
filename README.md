@@ -10,7 +10,7 @@ npm run build
 npm run start
 ```
 
-Now, the server raw output can be accessed from http://localhost:8080/ on your local machine
+Now, the server raw output can be accessed from http://localhost:8080/ on your local machine 
 
 Then to run the website, navigate to judgement-site and run
 
