@@ -1,5 +1,26 @@
 # Judgement
 
+## How To Run
+
+In order to see output on the site Front End, you need to run both the game server and the game site.
+
+To run game server, navigate to the game_server folder and run
+```
+npm run build
+npm run start
+```
+
+Now, the server raw output can be accessed from http://localhost:8080/ on your local machine
+
+Then to run the website, navigate to judgement-site and run
+
+```
+npm run dev
+```
+The site will automatically recompile when you save changes in the folder and you can access it via http://localhost:3000. 
+
+## What is Judgement
+
 Judgement is a simple trump based card game. The rules of the game can be found [here](http://card-games.wonderhowto.com/how-to/play-card-game-judgment-0122237/) 
 
 The goal of this project is to provide easy access to anyone who wants to build 
