@@ -2,46 +2,7 @@ import type { HttpFunction } from "@google-cloud/functions-framework/build/src/f
 import { JudgementDeck } from "./objects/deck";
 import { Card } from "./objects/card";
 import { Player } from "./objects/player";
-
-interface PredictionLog {
-  playerId: number;
-  prediction: number;
-  cards: Card[];
-  trumpCard: Card;
-}
-
-interface PlayActionLog {
-  playerId: number;
-  cardPlayed: Card;
-  handNumber: number;
-}
-
-interface HandWinnerLog {
-  handWinnerPlayerId: number;
-  handWinnerCard: Card;
-  handsCardsInOrder: Card[];
-}
-
-interface RoundResultLog {
-  playerId: number;
-  prediction: number;
-  actual: number;
-  scoreAdded: number;
-  originalHand: Card[];
-}
-
-interface RoundLogs {
-    predictionInfo: PredictionLog[];
-    playActionInfo: PlayActionLog[];
-    handWinnerInfo: HandWinnerLog[];
-    roundResultInfo: RoundResultLog[];
-    linearLogs: string[];
-}
-
-interface RoundResults {
-    scores: { [id: number]: number };
-    logs: RoundLogs[];
-}
+import { GameResult, RoundResults, PredictionLog, HandWinnerLog, PlayActionLog, RoundResultLog } from "./objects/logs";
 
 export const simulateGames: HttpFunction = async (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
@@ -59,48 +20,46 @@ export const simulateGames: HttpFunction = async (req, res) => {
     numberOfGames = req.body.numberOfGames;
     numberOfPlayers = req.body.numberOfPlayers;
   }
-  const gameResults: RoundResults[][] = await runGames(numberOfGames, numberOfPlayers);
+  const gameResults: GameResult[] = await runGames(numberOfGames, numberOfPlayers);
   res.status(200).send(gameResults);
 };
 
-const runGames = async (numberOfGames: number, numberOfPlayers: number) => {
+const runGames = async (numberOfGames: number, numberOfPlayers: number): Promise<GameResult[]> => {
   const games = [];
   for (let i = 0; i < numberOfGames; i++) {
     games.push(runSingleGameOfGermanBridge);
   }
-  return Promise.all(games.map(async (game) => {
-    return game(numberOfPlayers);
-  }));
+  return Promise.all(
+    games.map(async (game) => {
+      return await game(numberOfPlayers);
+    })
+  );
 };
 
-const runSingleGameOfGermanBridge = async (numberOfPlayers: number): Promise<RoundResults[]> => {
+const runSingleGameOfGermanBridge = async (numberOfPlayers: number): Promise<GameResult> => {
   // create array of size number of players with unique ids
   const players: Player[] = Array.from(Array(numberOfPlayers), (_, i) => new Player(i));
-  let scores: { [id: number]: number } = {};
-  players.forEach((player) => (scores[player.id] = 0));
+  let gameScore: number[] = [];
+  players.forEach((_player) => gameScore.push(0));
   let startingPlayer = 0;
-  let roundResults = [];
-
+  let roundResults: RoundResults[] = [];
   for (let roundNum = 0; roundNum < 12; roundNum++) {
     const numberOfCards = getNumberOfCards(roundNum);
-    let singleRoundResultLog = playRound(players, numberOfCards, scores, startingPlayer, roundNum)
+    let singleRoundResultLog: RoundResults = playRound(players, numberOfCards, startingPlayer, roundNum);
     roundResults.push(singleRoundResultLog);
     startingPlayer = (startingPlayer + 1) % numberOfPlayers;
+    gameScore = gameScore.map((score, index) => score + singleRoundResultLog.roundScore[index]);
   }
-  return roundResults;
+  return {
+    roundResults: roundResults,
+    gameScore: gameScore,
+  };
 };
 
+const playRound = (players: Player[], numCards: number, startingPlayer: number, roundNumber: number): RoundResults => {
+  let scores: number[] = [];
+  players.forEach((_player) => scores.push(0));
 
-const playRound = (
-  players: Player[],
-  numCards: number,
-  scores: { [id: number]: number },
-  startingPlayer: number,
-  roundNumber: number
-): {
-    scores: { [id: number]: number };
-    logs: RoundLogs;
-} => {
   let deck = new JudgementDeck();
   // Deal out cards to each player
   // Get All Player Predictions for the round
@@ -122,9 +81,11 @@ const playRound = (
       cards: cardsDealtToPlayer,
       trumpCard: trumpCard,
     });
-    logsInOrder.push(`Player ${player.id} predicted ${predictions[player.id]} for cards ${cardsDealtToPlayer
+    logsInOrder.push(
+      `Player ${player.id} predicted ${predictions[player.id]} for cards ${cardsDealtToPlayer
         .map((card) => card.toString())
-        .join(", ")}\n The trump card is ${trumpCard.toString()}`)
+        .join(", ")}\n The trump card is ${trumpCard.toString()}`
+    );
   }
   // Play the round
   let cardsPlayedInOrder: Card[] = [];
@@ -142,7 +103,7 @@ const playRound = (
         cardPlayed: cardToPlay,
         handNumber: handNumber,
       });
-      logsInOrder.push(`Player ${player.id} played ${cardToPlay.toString()}`)
+      logsInOrder.push(`Player ${player.id} played ${cardToPlay.toString()}`);
       cardsPlayedInOrder.push(cardToPlay);
     }
 
@@ -170,7 +131,7 @@ const playRound = (
       handWinnerCard: winningCard,
       handsCardsInOrder: cardsPlayedInOrder,
     });
-    logsInOrder.push(`Hand ${handNumber} winner is Player ${winningPlayer} with ${winningCard.toString()}`)
+    logsInOrder.push(`Hand ${handNumber} winner is Player ${winningPlayer} with ${winningCard.toString()}`);
     cardsPlayedInOrder = [];
   }
 
@@ -191,17 +152,18 @@ const playRound = (
       scoreAdded: scoreForPlayer,
       originalHand: playerToHands[player.id],
     });
-    logsInOrder.push(`Player ${player.id} scored ${scoreForPlayer} points for prediction ${prediction}`)
+    logsInOrder.push(`Player ${player.id} scored ${scoreForPlayer} points for prediction ${prediction}`);
   });
+  console.log(scores)
   return {
-    scores: scores,
+    roundScore: scores,
     logs: {
-        predictionInfo: predictionsLog,
-        playActionInfo: playActionLog,
-        handWinnerInfo: handWinnerLog,
-        roundResultInfo: roundResultLog,
-        linearLogs: logsInOrder,
-    }
+      predictionInfo: predictionsLog,
+      playActionInfo: playActionLog,
+      handWinnerInfo: handWinnerLog,
+      roundResultInfo: roundResultLog,
+      linearLogs: logsInOrder,
+    },
   };
 };
 
