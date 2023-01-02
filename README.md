@@ -19,6 +19,10 @@ npm run dev
 ```
 The site will automatically recompile when you save changes in the folder and you can access it via http://localhost:3000. 
 
+## Current Progress
+
+Please view this Notion Page here to see what work needs to get done for the continued progress of this repo.
+
 ## What is Judgement
 
 Judgement is a simple trump based card game. The rules of the game can be found [here](http://card-games.wonderhowto.com/how-to/play-card-game-judgment-0122237/) 

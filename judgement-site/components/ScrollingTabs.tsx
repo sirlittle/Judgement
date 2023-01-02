@@ -14,19 +14,11 @@ export default function ScrollableTabData(props: { gameResults: GameResult }) {
   let roundData = props.gameResults.roundResults[round];
   return (
     <div>
-      <Box sx={{ maxWidth: { xs: 320, sm: 480 }, bgcolor: "background.paper" }}>
-        <Tabs
-          value={round}
-          onChange={handleRoundChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs example"
-        >
-          {props.gameResults.roundResults.map((_, index) => (
-            <Tab label={index} />
-          ))}
-        </Tabs>
-      </Box>
+      <Tabs value={round} onChange={handleRoundChange} variant="scrollable" aria-label="scrollable auto tabs">
+        {props.gameResults.roundResults.map((_, index) => (
+          <Tab label={index} />
+        ))}
+      </Tabs>
       <RoundResultPage roundResults={roundData} />
     </div>
   );
