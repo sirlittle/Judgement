@@ -17,6 +17,14 @@ export class Card {
         this.name = ranks[rank] + " of " + suits[suit];
     }
 
+    toFirebaseObject() {
+        return {
+            suit: this.suit,
+            rank: this.rank,
+            name: this.name
+        }
+    }
+
     toString() {
         return this.name;
     }

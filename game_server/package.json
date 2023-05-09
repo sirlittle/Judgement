@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc --project ./",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "functions-framework --source=compiled_js/ --target=simulateGames",
+    "start": "node ./compiled_js/index.js",
     "watch": "concurrently \"tsc -w\" \"nodemon --watch ./compiled_js/ --exec npm run start\""
   },
   "author": "Salil Vanvari",
@@ -21,8 +21,11 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^6.5.0",
     "@google-cloud/functions-framework": "^3.1.2",
+    "dotenv": "^16.0.3",
     "express": "^4.18.1",
+    "firebase-admin": "^11.7.0",
     "lodash": "^4.17.21"
   }
 }

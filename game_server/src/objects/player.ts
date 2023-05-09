@@ -1,4 +1,3 @@
-import { randomBytes } from "crypto";
 import { Card } from "./card";
 import _ from "lodash";
 
@@ -51,7 +50,6 @@ export class RegulatedPlayer {
     return prediction;
   }
 }
-
 export class Player extends RegulatedPlayer {
   playCard(cardsPlayedInOrder: Card[], trumpCard: Card) {
     const legalCards = this.getLegalMoves(cardsPlayedInOrder);

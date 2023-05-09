@@ -23,6 +23,8 @@ The site will automatically recompile when you save changes in the folder and yo
 
 Please view this Notion Page here to see what work needs to get done for the continued progress of this repo.
 
+Ignore everything in the old_python_judgement folder as it is deprecated code.
+
 ## What is Judgement
 
 Judgement is a simple trump based card game. The rules of the game can be found [here](http://card-games.wonderhowto.com/how-to/play-card-game-judgment-0122237/) 
