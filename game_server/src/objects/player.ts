@@ -1,4 +1,5 @@
 import { Card } from "./card";
+import { Predictions, Hands, HandCounter } from "./game";
 import _ from "lodash";
 
 // This will be class that defines all player available actions
@@ -13,11 +14,19 @@ export class RegulatedPlayer {
     this.otherPlayerIds = [];
   }
 
+  getNumOfCards(): number {
+    return this.hand.length;
+  }
+
   getAllPlayer(ids: number[]){
     this.otherPlayerIds = ids;
   }
 
-  getDealtCards(cards: Card[]) {
+  getNumberOfPlayers(): number {
+    return this.otherPlayerIds.length + 1;
+  }
+
+  async setDealtCards(cards: Card[]) {
     cards.map((card) => this.hand.push(card));
   }
 
@@ -33,7 +42,7 @@ export class RegulatedPlayer {
     return legalCards;
   }
 
-  playCard(cardsPlayedInOrder: Card[], trumpCard: Card) {
+  async playCard(cardsPlayedInOrder: Card[], handsWonByPlayer: HandCounter, roundPredictions: Predictions, trumpCard: Card): Promise<Card> {
     const legalCards = this.getLegalMoves(cardsPlayedInOrder);
     const randomChoice = _.random(0, legalCards.length - 1, false);
     const cardToPlay = legalCards[randomChoice];
@@ -41,17 +50,25 @@ export class RegulatedPlayer {
     return this.hand.splice(indexToPopOff, 1)[0];
   }
 
-  // Logic for this is broken, pass in Predictions So Far and Trump Card only.
-  predict(numCards: number, numLeft: number, trumpCard: Card, last: boolean = false): number {
-    let prediction = _.random(0, numCards, false);
-    if (last && prediction === numLeft) {
-      prediction = prediction + [-1, 1][_.random(0, 1, false)];
+  async predict(predictions: Predictions, trumpCard: Card): Promise<number> {
+    let prediction = _.random(0, this.getNumOfCards(), false);
+    // get number of keys in predictions
+    const numPlayersAlreadyPredicted = Object.keys(predictions).length;
+    // sum up all predictions made so far
+    const sumOfPredictions = Object.values(predictions).reduce((a, b) => a + b, 0);
+    const lastPlayer = numPlayersAlreadyPredicted === this.getNumberOfPlayers() - 1;
+    if (sumOfPredictions + prediction == this.getNumOfCards() && lastPlayer) {
+      return await this.predict(predictions, trumpCard);
     }
     return prediction;
   }
+
+  async setHandResult(handInOrder: Card[], handWinnerId: number) {
+    return;
+  }
 }
 export class Player extends RegulatedPlayer {
-  playCard(cardsPlayedInOrder: Card[], trumpCard: Card) {
+  async playCard(cardsPlayedInOrder: Card[], handsWonByPlayer: HandCounter, roundPredictions: Predictions, trumpCard: Card): Promise<Card> {
     const legalCards = this.getLegalMoves(cardsPlayedInOrder);
     const randomChoice = _.random(0, legalCards.length - 1, false);
     const cardToPlay = legalCards[randomChoice];
@@ -60,10 +77,15 @@ export class Player extends RegulatedPlayer {
   }
 
   // Logic for this is broken, pass in Predictions So Far and Trump Card only.
-  predict(numCards: number, numLeft: number, trumpCard: Card, last: boolean = false): number {
-    let prediction = _.random(0, numCards, false);
-    if (last && prediction === numLeft) {
-      prediction = prediction + [-1, 1][_.random(0, 1, false)];
+  async predict(predictions: Predictions, trumpCard: Card): Promise<number> {
+    let prediction = _.random(0, this.getNumOfCards(), false);
+    // get number of keys in predictions
+    const numPlayersAlreadyPredicted = Object.keys(predictions).length;
+    // sum up all predictions made so far
+    const sumOfPredictions = Object.values(predictions).reduce((a, b) => a + b, 0);
+    const lastPlayer = numPlayersAlreadyPredicted === this.getNumberOfPlayers() - 1;
+    if (sumOfPredictions + prediction == this.getNumOfCards() && lastPlayer) {
+      return await this.predict(predictions, trumpCard);
     }
     return prediction;
   }

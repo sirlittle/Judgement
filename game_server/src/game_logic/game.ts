@@ -2,7 +2,7 @@ import { JudgementDeck } from "../objects/deck";
 import { Card } from "../objects/card";
 import { Player } from "../objects/player";
 import { GameResult, RoundResults, PredictionLog, HandWinnerLog, PlayActionLog, RoundResultLog } from "../objects/logs";
-
+import {Predictions, Hands, HandCounter} from "../objects/game";
 
 export const runGames = async (numberOfGames: number, numberOfPlayers: number): Promise<GameResult[]> => {
     const games = [];
@@ -25,7 +25,7 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
     let roundResults: RoundResults[] = [];
     for (let roundNum = 0; roundNum < 12; roundNum++) {
       const numberOfCards = getNumberOfCards(roundNum);
-      let singleRoundResultLog: RoundResults = playRound(players, numberOfCards, startingPlayer, roundNum);
+      let singleRoundResultLog: RoundResults = await playRound(players, numberOfCards, startingPlayer, roundNum);
       roundResults.push(singleRoundResultLog);
       startingPlayer = (startingPlayer + 1) % numberOfPlayers;
       gameScore = gameScore.map((score, index) => score + singleRoundResultLog.roundScore[index]);
@@ -36,16 +36,15 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
     };
   };
   
-  const playRound = (players: Player[], numCards: number, startingPlayer: number, roundNumber: number): RoundResults => {
+  const playRound = async (players: Player[], numCards: number, startingPlayer: number, roundNumber: number): Promise<RoundResults> => {
     let scores: number[] = [];
     players.forEach((_player) => scores.push(0));
-  
     let deck = new JudgementDeck();
     // Deal out cards to each player
     // Get All Player Predictions for the round
-    let predictions: { [playerId: number]: number } = {};
+    let predictions: Predictions = {};
     let trumpCard = deck.getTrumpCard();
-    let playerToHands: { [playerId: number]: Card[] } = {};
+    let playerToHands: Hands = {};
     let predictionsLog: PredictionLog[] = [];
     let logsInOrder: string[] = [];
     for (let i = 0; i < players.length; i++) {
@@ -53,8 +52,8 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
       const player = players[indexOfPlayer];
       const cardsDealtToPlayer: Card[] = deck.deal(numCards);
       playerToHands[player.id] = cardsDealtToPlayer;
-      player.getDealtCards(cardsDealtToPlayer);
-      predictions[player.id] = player.predict(numCards, players.length - 1, trumpCard, i === players.length - 1);
+      await player.setDealtCards(cardsDealtToPlayer);
+      predictions[player.id] = await player.predict(predictions, trumpCard);
       predictionsLog.push({
         playerId: player.id,
         prediction: predictions[player.id],
@@ -68,16 +67,16 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
       );
     }
     // Play the round
-    let cardsPlayedInOrder: Card[] = [];
-    let curHandsMade: { [playerId: number]: number } = {};
+    let curHandsMade: HandCounter = {};
     players.forEach((player) => (curHandsMade[player.id] = 0));
     let playActionLog: PlayActionLog[] = [];
     let handWinnerLog: HandWinnerLog[] = [];
     for (let handNumber = 0; handNumber < numCards; handNumber++) {
+      let cardsPlayedInOrder: Card[] = [];
       for (let playerNumber = 0; playerNumber < players.length; playerNumber++) {
         let indexOfPlayer = (startingPlayer + playerNumber) % players.length;
         const player = players[indexOfPlayer];
-        const cardToPlay = player.playCard(cardsPlayedInOrder, trumpCard);
+        const cardToPlay = await player.playCard(cardsPlayedInOrder, curHandsMade, predictions, trumpCard);
         playActionLog.push({
           playerId: player.id,
           cardPlayed: cardToPlay,
@@ -88,31 +87,15 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
       }
   
       // set starting player to player that won the hand
-      let currentPlayer = startingPlayer;
-      let winningPlayer = startingPlayer;
-      let winningCard = cardsPlayedInOrder[0];
-      let trumpSeen = winningCard.suit === trumpCard.suit;
-      for (let cardNumber = 1; cardNumber < cardsPlayedInOrder.length; cardNumber++) {
-        let nextCard = cardsPlayedInOrder[cardNumber];
-        currentPlayer = (currentPlayer + 1) % players.length;
-        if (winningCard.suit == nextCard.suit && winningCard.rank < nextCard.rank) {
-          winningCard = nextCard;
-          winningPlayer = currentPlayer;
-        } else if (!trumpSeen && nextCard.suit === trumpCard.suit) {
-          trumpSeen = true;
-          winningCard = nextCard;
-          winningPlayer = currentPlayer;
-        }
-      }
-      curHandsMade[winningPlayer]++;
-      startingPlayer = winningPlayer;
+      const handWinnerInfo = getHandWinner(cardsPlayedInOrder, trumpCard, startingPlayer, players.length);
+      curHandsMade[handWinnerInfo.player]++;
+      startingPlayer = handWinnerInfo.player;
       handWinnerLog.push({
-        handWinnerPlayerId: winningPlayer,
-        handWinnerCard: winningCard,
+        handWinnerPlayerId: handWinnerInfo.player,
+        handWinnerCard: handWinnerInfo.card,
         handsCardsInOrder: cardsPlayedInOrder,
       });
-      logsInOrder.push(`Hand ${handNumber} winner is Player ${winningPlayer} with ${winningCard.toString()}`);
-      cardsPlayedInOrder = [];
+      logsInOrder.push(`Hand ${handNumber} winner is Player ${handWinnerInfo.player} with ${handWinnerInfo.card.toString()}`);
     }
   
     // Update scores
@@ -134,7 +117,6 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
       });
       logsInOrder.push(`Player ${player.id} scored ${scoreForPlayer} points for prediction ${prediction}`);
     });
-    console.log(scores)
     return {
       roundScore: scores,
       logs: {
@@ -146,6 +128,29 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
       },
     };
   };
+
+  function getHandWinner(hand: Card[], trumpCard: Card, startingPlayer: number, numPlayers: number): {player: number, card: Card} {
+    let winningCard = hand[0];
+    let currentPlayer = startingPlayer;
+    let winningPlayer = startingPlayer;
+    let trumpSeen = winningCard.suit === trumpCard.suit;
+    for (let cardNumber = 1; cardNumber < hand.length; cardNumber++) {
+      let nextCard = hand[cardNumber];
+      currentPlayer = (currentPlayer + 1) % numPlayers;
+      if (winningCard.suit == nextCard.suit && winningCard.rank < nextCard.rank) {
+        winningCard = nextCard;
+        winningPlayer = currentPlayer;
+      } else if (!trumpSeen && nextCard.suit === trumpCard.suit) {
+        trumpSeen = true;
+        winningCard = nextCard;
+        winningPlayer = currentPlayer;
+      }
+    }
+    return {
+      player: winningPlayer,
+      card: winningCard,
+    };
+  }
   
   function getScore(prediction: number): number {
     return (prediction + 1) * 10 + prediction;
