@@ -8,9 +8,22 @@ export class RemotePlayer extends RegulatedPlayer {
 
     url: string;
 
-    constructor(url: string, id: number) {
-        super(id);
+    constructor(url: string, playerId: number, gameId: string) {
+        super(playerId, gameId);
         this.url = url;
+    }
+
+    async instantiateGame() {
+        // Use url to instantiate game on remote player
+        await fetch(this.url + '/instantiateGame', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                gameId: this.gameId
+            })
+        })
     }
 
     async setDealtCards(cards: Card[]) {

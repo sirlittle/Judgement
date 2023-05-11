@@ -3,6 +3,7 @@ import { Card } from "../objects/card";
 import { Player } from "../objects/player";
 import { GameResult, RoundResults, PredictionLog, HandWinnerLog, PlayActionLog, RoundResultLog } from "../objects/logs";
 import {Predictions, Hands, HandCounter} from "../objects/game";
+import crypto from "crypto";
 
 export const runGames = async (numberOfGames: number, numberOfPlayers: number): Promise<GameResult[]> => {
     const games = [];
@@ -18,7 +19,8 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
   
   const runSingleGameOfGermanBridge = async (numberOfPlayers: number): Promise<GameResult> => {
     // create array of size number of players with unique ids
-    const players: Player[] = Array.from(Array(numberOfPlayers), (_, i) => new Player(i));
+    const gameId = crypto.randomBytes(20).toString("hex");
+    const players: Player[] = Array.from(Array(numberOfPlayers), (_, i) => new Player(i, gameId));
     let gameScore: number[] = [];
     players.forEach((_player) => gameScore.push(0));
     let startingPlayer = 0;
@@ -51,24 +53,24 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
       let indexOfPlayer = (startingPlayer + i) % players.length;
       const player = players[indexOfPlayer];
       const cardsDealtToPlayer: Card[] = deck.deal(numCards);
-      playerToHands[player.id] = cardsDealtToPlayer;
+      playerToHands[player.playerId] = cardsDealtToPlayer;
       await player.setDealtCards(cardsDealtToPlayer);
-      predictions[player.id] = await player.predict(predictions, trumpCard);
+      predictions[player.playerId] = await player.predict(predictions, trumpCard);
       predictionsLog.push({
-        playerId: player.id,
-        prediction: predictions[player.id],
+        playerId: player.playerId,
+        prediction: predictions[player.playerId],
         cards: cardsDealtToPlayer,
         trumpCard: trumpCard,
       });
       logsInOrder.push(
-        `Player ${player.id} predicted ${predictions[player.id]} for cards ${cardsDealtToPlayer
+        `Player ${player.playerId} predicted ${predictions[player.playerId]} for cards ${cardsDealtToPlayer
           .map((card) => card.toString())
           .join(", ")}\n The trump card is ${trumpCard.toString()}`
       );
     }
     // Play the round
     let curHandsMade: HandCounter = {};
-    players.forEach((player) => (curHandsMade[player.id] = 0));
+    players.forEach((player) => (curHandsMade[player.playerId] = 0));
     let playActionLog: PlayActionLog[] = [];
     let handWinnerLog: HandWinnerLog[] = [];
     for (let handNumber = 0; handNumber < numCards; handNumber++) {
@@ -78,11 +80,11 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
         const player = players[indexOfPlayer];
         const cardToPlay = await player.playCard(cardsPlayedInOrder, curHandsMade, predictions, trumpCard);
         playActionLog.push({
-          playerId: player.id,
+          playerId: player.playerId,
           cardPlayed: cardToPlay,
           handNumber: handNumber,
         });
-        logsInOrder.push(`Player ${player.id} played ${cardToPlay.toString()}`);
+        logsInOrder.push(`Player ${player.playerId} played ${cardToPlay.toString()}`);
         cardsPlayedInOrder.push(cardToPlay);
       }
   
@@ -102,20 +104,20 @@ export const runGames = async (numberOfGames: number, numberOfPlayers: number): 
     // Get all Player Scores based on their predictions
     let roundResultLog: RoundResultLog[] = [];
     players.forEach((player) => {
-      const prediction = predictions[player.id];
+      const prediction = predictions[player.playerId];
       let scoreForPlayer = 0;
-      if (prediction === curHandsMade[player.id]) {
+      if (prediction === curHandsMade[player.playerId]) {
         scoreForPlayer = getScore(prediction);
       }
-      scores[player.id] += scoreForPlayer;
+      scores[player.playerId] += scoreForPlayer;
       roundResultLog.push({
-        playerId: player.id,
+        playerId: player.playerId,
         prediction: prediction,
-        actual: curHandsMade[player.id],
+        actual: curHandsMade[player.playerId],
         scoreAdded: scoreForPlayer,
-        originalHand: playerToHands[player.id],
+        originalHand: playerToHands[player.playerId],
       });
-      logsInOrder.push(`Player ${player.id} scored ${scoreForPlayer} points for prediction ${prediction}`);
+      logsInOrder.push(`Player ${player.playerId} scored ${scoreForPlayer} points for prediction ${prediction}`);
     });
     return {
       roundScore: scores,

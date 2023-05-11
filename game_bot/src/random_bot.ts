@@ -20,7 +20,7 @@ app.post("/instantiateGame", (req, res) => {
     res.send(gameId);
 }); 
 
-app.post("/prediction", (req, res) => {
+app.post("/predict", (req, res) => {
     // Game Data needs the following information
     // 1. The game id
     // 2. The player id
@@ -31,7 +31,7 @@ app.post("/prediction", (req, res) => {
     res.send("Hello World!");
 });
 
-app.post("/makeMove", (req, res) => {
+app.post("/playCard", (req, res) => {
     // Game Data provided to the bot
     // 1. Game id
     // 2. Player id
