@@ -1,7 +1,10 @@
 import { RegulatedPlayer } from "./player";
 import { Card } from "./card";
 import { Predictions, HandCounter } from "./game";
+import fetch from 'node-fetch';
 import _ from "lodash";
+import { cardInHand } from "./utils/hand_utils";
+
 export class RemotePlayer extends RegulatedPlayer {
     // This class will call a remote player to get moves
     // This class will also ensure that all moves and predictions made by remote player are legal
@@ -28,6 +31,7 @@ export class RemotePlayer extends RegulatedPlayer {
 
     async setDealtCards(cards: Card[]) {
         // Use url to send cards to remote player
+        cards.map((card) => this.hand.push(card));
         await fetch(this.url + '/setDealtCards', {
             method: 'POST',
             headers: {
@@ -41,7 +45,7 @@ export class RemotePlayer extends RegulatedPlayer {
 
     async playCard(cardsPlayedInOrder: Card[], handsWonByPlayer: HandCounter, roundPredictions: Predictions, trumpCard: Card) {
         // Use url to get card from remote player, make sure card is within the legal moves and then return it
-        const remotePlayerResult = await fetch(this.url + '/playCard', { // need to ensure that the type returned is a card
+        const remotePlayerResp = await fetch(this.url + '/playCard', { // need to ensure that the type returned is a card
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -53,13 +57,14 @@ export class RemotePlayer extends RegulatedPlayer {
                 trumpCard: trumpCard
             })
         }).then(
-            (response) => {
-                return response.json();
+            (response: any) => {
+                return response.json() as Promise<{  card: {suit: number, rank: number} }>;
             }
         )
+        const cardToPlay = new Card(remotePlayerResp.card.suit, remotePlayerResp.card.rank);
+
         const legalCards = this.getLegalMoves(cardsPlayedInOrder);
-        const cardToPlay = new Card(remotePlayerResult.data.suit, remotePlayerResult.data.rank);
-        if (!legalCards.includes(cardToPlay)) { // need to ensure this check works
+        if (!cardInHand(legalCards, cardToPlay)) { 
             // return a random legal card
             const randomChoice = _.random(0, legalCards.length - 1, false);
             return legalCards[randomChoice];
@@ -78,8 +83,8 @@ export class RemotePlayer extends RegulatedPlayer {
                 trumpCard: trumpCard
             })
         }).then(
-            (response) => {
-                return response.json();
+            (response: any) => {
+                return response.json() as Promise<{ data: number }>;
             }
         )
         const prediction = remotePrediction.data;

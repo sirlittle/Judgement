@@ -10,8 +10,8 @@ export const Hand = ({ cards }) => {
 
   return (
     <div className="hand">
-      {cards.map((card) => (
-          <Card rank={ranks[card.rank]} suit={suits[card.suit]} />
+      {cards.map( (card) => (
+          <Card rank={ranks[card.rank]} suit={suits[card.suit]} key={ranks[card.rank]}/>
       ))}
     </div>
   );
