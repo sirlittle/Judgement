@@ -1,4 +1,4 @@
-import { Card } from "./card";
+import { Card } from "judgment_utils";
 
 export class Deck {
     cards: Card[];

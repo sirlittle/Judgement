@@ -1,5 +1,11 @@
 # Judgement
 
+List of things that need to be understood:
+
+- How to make Judgment Utils a proper package so that it can be imported by game_bot and game_server.
+- Need to run npm link frequently.
+- Outline of the game_bot is created, need to actively fill in the pieces and then have game_server run games with 
+
 ## How To Run
 
 In order to see output on the site Front End, you need to run both the game server and the game site.

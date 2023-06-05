@@ -1,9 +1,7 @@
 import { RegulatedPlayer } from "./player";
-import { Card } from "./card";
-import { Predictions, HandCounter } from "./game";
+import { Card, cardInHand, Predictions, HandCounter } from "judgment_utils";
 import fetch from 'node-fetch';
 import _ from "lodash";
-import { cardInHand } from "./utils/hand_utils";
 
 export class RemotePlayer extends RegulatedPlayer {
     // This class will call a remote player to get moves

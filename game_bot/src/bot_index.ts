@@ -8,9 +8,10 @@ import express from "express";
 
 const app = express();
 const port = 4000;
+
 app.use(express.json());
 app.listen(port, () => {
-    console.log(`Game server listening at http://localhost:${port}`);
+    console.log(`Game bot listening at http://localhost:${port}`);
   });
   
 // set up an express endpt for the game to ping

@@ -1,6 +1,6 @@
 import "jest";
 import {RemotePlayer} from "../objects/remote_player";
-import {Card} from "../objects/card";
+import {Card} from "judgment_utils";
 import {assert} from "chai";
 import {describe, expect, test} from '@jest/globals';
 

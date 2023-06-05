@@ -1,6 +1,6 @@
 import type { HttpFunction } from "@google-cloud/functions-framework/build/src/functions";
 import { JudgementDeck } from "./objects/deck";
-import { Card } from "./objects/card";
+import { Card } from "judgment_utils/card";
 import { runGames } from "./game_logic/game";
 import { writeGamesToDB, getGameScore } from "./db/games_db";
 import express from "express";
