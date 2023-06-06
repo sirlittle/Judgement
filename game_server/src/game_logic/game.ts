@@ -1,8 +1,7 @@
 import { JudgementDeck } from "../objects/deck";
-import { Card } from "../objects/card";
 import { Player } from "../objects/player";
 import { GameResult, RoundResults, PredictionLog, HandWinnerLog, PlayActionLog, RoundResultLog } from "../objects/logs";
-import {Predictions, Hands, HandCounter} from "../objects/game";
+import { Card, Predictions, Hands, HandCounter } from "judgment_utils";
 import crypto from "crypto";
 
 export const runGames = async (numberOfGames: number, numberOfPlayers: number): Promise<GameResult[]> => {

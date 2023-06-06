@@ -1,0 +1,22 @@
+{
+  "name": "judgment_utils",
+  "version": "1.0.0",
+  "description": "A common set of utilities to be used across bots and the actual game server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc --project ./"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^5.1.3"
+  },
+  "exports": {
+    ".": {
+      "import": "./compiled_js/index.js",
+      "require": "./compiled_js/index.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

@@ -1,6 +1,5 @@
-
-const suits: string[] = ["Hearts", "Diamonds", "Spades", "Clubs"]
-const ranks: string[]  = Array.from(Array(9).keys()).map(i => String(i + 2)).concat(["Jack", "Queen", "King", "Ace"])
+export const suits: string[] = ["Hearts", "Diamonds", "Spades", "Clubs"]
+export const ranks: string[]  = Array.from(Array(9).keys()).map(i => String(i + 2)).concat(["Jack", "Queen", "King", "Ace"])
 
 export class Card {
     suit: number;
@@ -32,4 +31,8 @@ export class Card {
     toString() {
         return this.name;
     }
+}
+
+export function cardInHand(hand: Card[], card: Card): boolean {
+    return hand.some((c) => c.equals(card));
 }
