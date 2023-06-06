@@ -20,6 +20,12 @@ app.post("/instantiateGame", (req, res) => {
     res.send(gameId);
 }); 
 
+app.post("/setDealtCards", (req, res) => {
+    const cards = req.body["cards"];
+    console.log(`Received cards ${JSON.stringify(cards)}`);
+    res.send("Hello World!");
+});
+
 app.post("/predict", (req, res) => {
     // Game Data needs the following information
     // 1. The game id
@@ -40,5 +46,11 @@ app.post("/playCard", (req, res) => {
     // 5. Current trump card
     // 6. Current predictions
     // 7. Current moves so far
-    res.send("Hello World!");
+    console.log(req.body)
+    res.send({
+        "card": {
+            "suit": 0,
+            "rank": 0
+        }
+    });
 });

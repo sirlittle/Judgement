@@ -16,7 +16,7 @@ export default function ScrollableTabData(props: { gameResults: GameResult }) {
     <div>
       <Tabs value={round} onChange={handleRoundChange} variant="scrollable" aria-label="scrollable auto tabs">
         {props.gameResults.roundResults.map((_, index) => (
-          <Tab label={index} />
+          <Tab key={index} label={index} />
         ))}
       </Tabs>
       <RoundResultPage roundResults={roundData} />

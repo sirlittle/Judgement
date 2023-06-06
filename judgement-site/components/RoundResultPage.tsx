@@ -10,8 +10,8 @@ export function RoundResultPage(props: { roundResults: RoundResults }) {
     <div>
       <ScoreChart scores={props.roundResults.roundScore} />
       <ol>
-        {logList.map((log) => (
-          <li>{log}</li>
+        {logList.map((log, index) => (
+          <li key={index}>{log}</li>
         ))}
       </ol>
     </div>

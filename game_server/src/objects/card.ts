@@ -25,6 +25,10 @@ export class Card {
         }
     }
 
+    equals(other: Card) {
+        return this.suit === other.suit && this.rank === other.rank;
+    }
+
     toString() {
         return this.name;
     }

@@ -4,10 +4,12 @@ import { Card } from "./objects/card";
 import { runGames } from "./game_logic/game";
 import { writeGamesToDB, getGameScore } from "./db/games_db";
 import express from "express";
+import * as dotenv from 'dotenv';
+import cors from 'cors';
 
 const app = express();
-const port = process.env.PORT || 3000;
-
+const port = dotenv.config().parsed?.PORT || 8000;
+app.use(cors())
 app.post('/game', async (req, res) => {
   console.log(req.query.numberOfGames, req.query.numberOfPlayers)
   const numberOfGames = parseInt(req.query.numberOfGames?.toString() || "1"); // fix this
@@ -19,12 +21,20 @@ app.post('/game', async (req, res) => {
 app.get('/game/:gameId', (req, res) => {
   console.log(req.params.gameId);
 });
+
+app.get('/demoHand', async (req, res) => {
+  const demoHand = await getDemoHand();
+  res.status(200).send(JSON.stringify(demoHand));
+});
+
 app.post('/game/:gameId/move', (req, res) => {/* Make a move */});
+
 app.listen(port, () => {
   console.log(`Game server listening at http://localhost:${port}`);
 });
 
 // function only for local testing. In reality, all actual functions will be deployed as seperate cloud functions
+// Outdated, deploy as running server instead
 export const index: HttpFunction = async (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "GET, POST");
