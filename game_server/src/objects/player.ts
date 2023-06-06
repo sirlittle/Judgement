@@ -4,14 +4,16 @@ import _ from "lodash";
 
 // This will be class that defines all player available actions
 export class RegulatedPlayer {
-  id: number;
+  playerId: number;
   hand: Card[];
   otherPlayerIds: number[];
+  gameId: string;
 
-  constructor(id: number) {
-    this.id = id;
+  constructor(playerId: number, gameId: string) {
+    this.playerId = playerId;
     this.hand = [];
     this.otherPlayerIds = [];
+    this.gameId = gameId;
   }
 
   getNumOfCards(): number {
