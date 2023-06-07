@@ -33,6 +33,10 @@ export class Card {
     toString() {
         return this.name;
     }
+
+    toJsonString() {
+        return JSON.stringify({"card": this.toFirebaseObject()});
+    }
 }
 
 export function cardInHand(hand: Card[], card: Card): boolean {
