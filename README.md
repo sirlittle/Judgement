@@ -1,5 +1,6 @@
 # Judgement
 
+
 List of things that need to be understood:
 
 - How to make Judgment Utils a proper package so that it can be imported by game_bot and game_server.
@@ -10,13 +11,22 @@ List of things that need to be understood:
 
 In order to see output on the site Front End, you need to run both the game server and the game site.
 
-To run game server, navigate to the game_server folder and run
+You will also need to link the judgment_utils folder
+
+1. Navigate to judgment_utils
+2. Run `npm run build`
+3. Navigate to game_server on terminal
+4. run `npm link ../judgment_utils`
+
+You will need certs to a firestore. Contact Salil to get a cert and then copy the absolute path within the GOOGLE_APPLICATION_CREDENTIALS variable.
+
+Now To run game server, navigate to the game_server folder and run
 ```
 npm run build
 npm run start
 ```
 
-Now, the server raw output can be accessed from http://localhost:8080/ on your local machine 
+Now, the server raw output can be accessed from http://localhost:8080/ on your local machine.
 
 Then to run the website, navigate to judgement-site and run
 

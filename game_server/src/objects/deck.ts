@@ -1,4 +1,4 @@
-import { Card } from "judgment_utils";
+import { Card } from 'judgement_utils';
 
 export class Deck {
     cards: Card[];
@@ -36,7 +36,7 @@ export class JudgementDeck extends Deck {
     chooseTrump() {
         let potentialTrump = this.deal(1)[0];
         if (!potentialTrump) {
-            throw new Error("No cards left in deck");
+            throw new Error('No cards left in deck');
         }
         this.trump = potentialTrump;
     }
@@ -45,7 +45,3 @@ export class JudgementDeck extends Deck {
         return this.trump;
     }
 }
-
-
-
-

@@ -1,26 +1,27 @@
 {
-  "name": "game_bot",
-  "version": "1.0.0",
-  "description": "An example random bot for the game Judgement",
-  "main": "index.js",
-  "scripts": {
-    "build": "npx tsc --project ./",
-    "start": "node ./compiled_js/bot_index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Salil Vanvari",
-  "license": "ISC",
-  "dependencies": {
-    "chai": "^4.3.7",
-    "express": "^4.18.2",
-    "lodash": "^4.17.21",
-    "judgment_utils": "file:../judgment_utils"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.3.5",
-    "@types/express": "^4.17.17",
-    "@types/lodash": "^4.14.195",
-    "@types/mocha": "^10.0.1",
-    "mocha": "^10.2.0"
-  }
+    "name": "game_bot",
+    "version": "1.0.0",
+    "description": "An example random bot for the game Judgement",
+    "main": "index.js",
+    "scripts": {
+        "build": "npx tsc --project ./",
+        "start": "node ./compiled_js/bot_index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Salil Vanvari",
+    "license": "ISC",
+    "dependencies": {
+        "chai": "^4.3.7",
+        "express": "^4.18.2",
+        "judgement_utils": "file:../judgement_utils",
+        "lodash": "^4.17.21"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.3.5",
+        "@types/express": "^4.17.17",
+        "@types/lodash": "^4.14.195",
+        "@types/mocha": "^10.0.1",
+        "mocha": "^10.2.0",
+        "prettier": "2.8.8"
+    }
 }
