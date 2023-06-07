@@ -1,4 +1,4 @@
-import { Card } from "./card";
+import { Card } from './card';
 
 export type Predictions = { [playerId: number]: number };
 export type Hands = { [playerId: number]: Card[] };

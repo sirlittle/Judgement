@@ -1,5 +1,5 @@
 {
-  "name": "judgment_utils",
+  "name": "judgement_utils",
   "version": "1.0.0",
   "description": "A common set of utilities to be used across bots and the actual game server",
   "main": "index.js",
@@ -18,5 +18,8 @@
       "require": "./compiled_js/index.js"
     },
     "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "prettier": "2.8.8"
   }
 }
