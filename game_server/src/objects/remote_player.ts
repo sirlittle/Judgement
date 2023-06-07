@@ -36,6 +36,7 @@ export class RemotePlayer extends RegulatedPlayer {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                gameId: this.gameId,
                 cards: cards,
             }),
         });
@@ -55,6 +56,7 @@ export class RemotePlayer extends RegulatedPlayer {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                gameId: this.gameId,
                 cardsPlayedInOrder: cardsPlayedInOrder,
                 handsWonByPlayer: handsWonByPlayer,
                 roundPredictions: roundPredictions,
