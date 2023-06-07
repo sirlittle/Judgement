@@ -1,3 +1,5 @@
 node_modules/
 compiled_js/
 **/coverage
+**/.env
+**/.DS_Store
