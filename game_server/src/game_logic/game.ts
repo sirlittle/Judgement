@@ -1,5 +1,6 @@
 import { JudgementDeck } from '../objects/deck';
-import { Player } from '../objects/player';
+import { Player, RegulatedPlayer } from '../objects/player';
+import { RemotePlayer } from '../objects/remote_player';
 import {
     GameResult,
     RoundResults,
@@ -13,7 +14,8 @@ import crypto from 'crypto';
 
 export const runGames = async (
     numberOfGames: number,
-    numberOfPlayers: number
+    numberOfPlayers: number,
+    playerURLs: string[]
 ): Promise<GameResult[]> => {
     const games = [];
     for (let i = 0; i < numberOfGames; i++) {
@@ -21,20 +23,28 @@ export const runGames = async (
     }
     return Promise.all(
         games.map(async (game) => {
-            return await game(numberOfPlayers);
+            return await game(numberOfPlayers, playerURLs);
         })
     );
 };
 
 const runSingleGameOfGermanBridge = async (
-    numberOfPlayers: number
+    numberOfPlayers: number,
+    playerURLs: string[] = []
 ): Promise<GameResult> => {
     // create array of size number of players with unique ids
     const gameId = crypto.randomBytes(20).toString('hex');
-    const players: Player[] = Array.from(
-        Array(numberOfPlayers),
-        (_, i) => new Player(i, gameId)
-    );
+
+    const players : RegulatedPlayer[] = await Promise.all(playerURLs.map( async (url, index) => {
+        if (url === '') {
+            return new Player(index, gameId);
+        } else {
+            const currentPlayer : RemotePlayer = new RemotePlayer(url, index, gameId);
+            await currentPlayer.instantiateGame();
+            return currentPlayer;
+        }
+    }));
+
     let gameScore: number[] = [];
     players.forEach((_player) => gameScore.push(0));
     let startingPlayer = 0;
@@ -60,7 +70,7 @@ const runSingleGameOfGermanBridge = async (
 };
 
 const playRound = async (
-    players: Player[],
+    players: RegulatedPlayer[],
     numCards: number,
     startingPlayer: number,
     roundNumber: number

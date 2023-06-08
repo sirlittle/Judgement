@@ -35,7 +35,7 @@ export class Card {
     }
 
     toJsonString() {
-        return JSON.stringify({"card": this.toFirebaseObject()});
+        return JSON.stringify({"card": {suit: this.suit, rank: this.rank}});
     }
 }
 

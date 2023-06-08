@@ -88,13 +88,14 @@ export class RemotePlayer extends RegulatedPlayer {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                gameId: this.gameId,
                 predictions: predictions,
                 trumpCard: trumpCard,
             }),
         }).then((response: any) => {
-            return response.json() as Promise<{ data: number }>;
+            return response.json() as Promise<{ prediction: number }>;
         });
-        const prediction = remotePrediction.data;
+        const prediction = remotePrediction.prediction;
         // Below is a check to make sure that the player is not making an illegal prediction.
         const numPlayersAlreadyPredicted = Object.keys(predictions).length;
         // sum up all predictions made so far

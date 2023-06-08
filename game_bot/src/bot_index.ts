@@ -8,7 +8,7 @@ import express from 'express';
 import { Player } from './player';
 import { Card, Predictions, HandCounter } from 'judgement_utils';
 const app = express();
-const port = 4000;
+import portfinder from 'portfinder';
 const gameMap = new Map<string, Player>();
 
 app.use(express.json());
@@ -29,7 +29,7 @@ app.post('/setDealtCards', (req, res) => {
     const gameId = req.body['gameId'];
     const player = gameMap.get(gameId);
     if (player === undefined) {
-        console.log('Could not find game');
+        console.log('Could not find game set dealt cards');
         res.sendStatus(400);
         return
     }
@@ -47,7 +47,7 @@ app.post('/predict', async (req, res) => {
     const gameId = req.body['gameId'];
     const player = gameMap.get(gameId);
     if (player === undefined) {
-        console.log('Could not find game');
+        console.log('Could not find game prediction');
         res.sendStatus(400);
         return;
     }
@@ -69,7 +69,7 @@ app.post('/playCard', async (req, res) => {
     const gameId = req.body['gameId'];
     const player = gameMap.get(gameId);
     if (player === undefined) {
-        console.log('Could not find game');
+        console.log('Could not find game play card');
         res.sendStatus(400);
         return;
     }
@@ -97,6 +97,11 @@ app.post('/playCard', async (req, res) => {
     return;
 });
 
-app.listen(port, () => {
-    console.log(`Game bot listening at http://localhost:${port}`);
-});
+portfinder.getPort((err: any, port: any) => {
+    if (err) throw err;
+    app.listen(port, () =>
+        console.log(`Game bot listening at http://localhost:${port}`)
+    );
+  });
+
+  

@@ -16,9 +16,12 @@ app.post('/game', async (req, res) => {
     const numberOfPlayers = parseInt(
         req.query.numberOfPlayers?.toString() || '5'
     );
+    const playerURLs : string[] = JSON.parse(req.query.playerURLs?.toString() || "[]")   
+    console.log(playerURLs)
     const gameResults: string[] = await simulateGames(
         numberOfGames,
-        numberOfPlayers
+        numberOfPlayers,
+        playerURLs
     );
     res.status(200).send(gameResults);
 });
@@ -60,9 +63,10 @@ export const index: HttpFunction = async (req, res) => {
             const numberOfPlayers = parseInt(
                 req.query.numberOfPlayers?.toString() || '5'
             );
+            const playerURLs : string[] = JSON.parse(req.query.playerURLs?.toString() || "[]")
             const gameResults: string[] = await simulateGames(
                 numberOfGames,
-                numberOfPlayers
+                numberOfPlayers,
             );
             res.status(200).send(gameResults);
             break;
@@ -82,9 +86,13 @@ export const index: HttpFunction = async (req, res) => {
 
 export const simulateGames = async (
     numberOfGames: number,
-    numberOfPlayers: number
+    numberOfPlayers: number,
+    playerURLs: string[] = []
 ): Promise<string[]> => {
-    const games = await runGames(numberOfGames, numberOfPlayers);
+    while (playerURLs.length < numberOfPlayers) {
+        playerURLs.push('');
+    }
+    const games = await runGames(numberOfGames, numberOfPlayers, playerURLs);
     const gameIds = await writeGamesToDB(games);
     return gameIds;
 };
