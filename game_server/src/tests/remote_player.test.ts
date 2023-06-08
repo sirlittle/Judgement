@@ -11,7 +11,7 @@ describe('Remote player can instantiate game', () => {
 
         await remotePlayer.instantiateGame();
         await remotePlayer.setDealtCards([
-            new Card(0, 0),
+            new Card(0, 4),
             new Card(0, 1),
             new Card(0, 2),
             new Card(0, 3),
