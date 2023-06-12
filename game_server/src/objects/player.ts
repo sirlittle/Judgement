@@ -2,13 +2,14 @@ import { Card, Predictions, HandCounter } from 'judgement_utils';
 import _ from 'lodash';
 
 // This will be class that defines all player available actions
+export type PlayerScores = { [playerId: string]: number };
 export class RegulatedPlayer {
-    playerId: number;
+    playerId: string;
     hand: Card[];
     otherPlayerIds: number[];
     gameId: string;
 
-    constructor(playerId: number, gameId: string) {
+    constructor(playerId: string, gameId: string) {
         this.playerId = playerId;
         this.hand = [];
         this.otherPlayerIds = [];

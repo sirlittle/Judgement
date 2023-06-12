@@ -9,7 +9,7 @@ export class RemotePlayer extends RegulatedPlayer {
 
     url: string;
 
-    constructor(url: string, playerId: number, gameId: string) {
+    constructor(url: string, playerId: string, gameId: string) {
         super(playerId, gameId);
         this.url = url;
     }
