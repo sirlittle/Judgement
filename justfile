@@ -1,3 +1,5 @@
+set positional-arguments
+
 default:
   just --list
 
@@ -22,5 +24,3 @@ install_game_server:
 
 run_game_server: build_game_server
     cd game_server && npm run start
-    
-

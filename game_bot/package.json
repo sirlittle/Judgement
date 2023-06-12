@@ -13,10 +13,10 @@
     "dependencies": {
         "chai": "^4.3.7",
         "express": "^4.18.2",
-        "judgement_utils": "file:../judgement_utils",
+        "judgement_utils": "^1.0.1",
         "lodash": "^4.17.21",
-        "typescript": "^5.1.3",
-        "portfinder": "^1.0.28"
+        "portfinder": "^1.0.28",
+        "typescript": "^5.1.3"
     },
     "devDependencies": {
         "@types/chai": "^4.3.5",

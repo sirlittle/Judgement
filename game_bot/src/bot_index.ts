@@ -1,20 +1,15 @@
-// Instantiate bot with game
-// the bot needs to get some token from the server
-// the bot needs to be able to query for data about some game
-// the game needs to be able to ping the bot for a move
-
-// set up express server
 import express from 'express';
 import { Player } from './player';
 import { Card, Predictions, HandCounter } from 'judgement_utils';
+
+
 const app = express();
 import portfinder from 'portfinder';
 const gameMap = new Map<string, Player>();
 
 app.use(express.json());
-// set up an express endpt for the game to ping
+
 app.post('/instantiateGame', (req, res) => {
-    // we need to receive a game Id, our Id, and number of players.
     const gameId = req.body['gameId'];
     console.log(`Received game Id ${gameId}`)
     const playerId = req.body['playerId'];
@@ -25,7 +20,6 @@ app.post('/instantiateGame', (req, res) => {
 });
 
 app.post('/setDealtCards', (req, res) => {
-    // Need Game Id and player Id
     const gameId = req.body['gameId'];
     const player = gameMap.get(gameId);
     if (player === undefined) {

@@ -1,26 +1,27 @@
 import { Card } from 'judgement_utils';
+import { PlayerScores } from './player';
 
 export interface PredictionLog {
-    playerId: number;
+    playerId: string;
     prediction: number;
     cards: Card[];
     trumpCard: Card;
 }
 
 export interface PlayActionLog {
-    playerId: number;
+    playerId: string;
     cardPlayed: Card;
     handNumber: number;
 }
 
 export interface HandWinnerLog {
-    handWinnerPlayerId: number;
+    handWinnerPlayerId: string;
     handWinnerCard: Card;
     handsCardsInOrder: Card[];
 }
 
 export interface RoundResultLog {
-    playerId: number;
+    playerId: string;
     prediction: number;
     actual: number;
     scoreAdded: number;
@@ -36,13 +37,13 @@ export interface RoundLogs {
 }
 
 export interface RoundResults {
-    roundScore: number[];
+    roundScore: PlayerScores;
     logs: RoundLogs;
 }
 
 export interface GameResult {
     roundResults: RoundResults[];
-    gameScore: number[];
+    gameScore: PlayerScores;
 }
 
 export const gameResultToFireBaseObject = (gameResult: GameResult): any => {

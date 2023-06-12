@@ -1,5 +1,5 @@
 import { JudgementDeck } from '../objects/deck';
-import { Player, RegulatedPlayer } from '../objects/player';
+import { Player, RegulatedPlayer, PlayerScores } from '../objects/player';
 import { RemotePlayer } from '../objects/remote_player';
 import {
     GameResult,
@@ -9,13 +9,14 @@ import {
     PlayActionLog,
     RoundResultLog,
 } from '../objects/logs';
+import { Bot }  from '../objects/bot';
 import { Card, Predictions, Hands, HandCounter } from 'judgement_utils';
 import crypto from 'crypto';
 
 export const runGames = async (
     numberOfGames: number,
     numberOfPlayers: number,
-    playerURLs: string[]
+    bots: Bot[]
 ): Promise<GameResult[]> => {
     const games = [];
     for (let i = 0; i < numberOfGames; i++) {
@@ -23,30 +24,30 @@ export const runGames = async (
     }
     return Promise.all(
         games.map(async (game) => {
-            return await game(numberOfPlayers, playerURLs);
+            return await game(numberOfPlayers, bots);
         })
     );
 };
 
 const runSingleGameOfGermanBridge = async (
     numberOfPlayers: number,
-    playerURLs: string[] = []
+    bots: Bot[] = []
 ): Promise<GameResult> => {
     // create array of size number of players with unique ids
     const gameId = crypto.randomBytes(20).toString('hex');
 
-    const players : RegulatedPlayer[] = await Promise.all(playerURLs.map( async (url, index) => {
-        if (url === '') {
-            return new Player(index, gameId);
+    const players : RegulatedPlayer[] = await Promise.all(bots.map( async (bot, index) => {
+        if (bot.remote == false) {
+            return new Player(index.toString(), gameId);
         } else {
-            const currentPlayer : RemotePlayer = new RemotePlayer(url, index, gameId);
+            const currentPlayer : RemotePlayer = new RemotePlayer(bot.botUrl, bot.botId, gameId);
             await currentPlayer.instantiateGame();
             return currentPlayer;
         }
     }));
 
-    let gameScore: number[] = [];
-    players.forEach((_player) => gameScore.push(0));
+    let gameScore: PlayerScores = {};
+    players.forEach((player) => gameScore[player.playerId] = 0);
     let startingPlayer = 0;
     let roundResults: RoundResults[] = [];
     for (let roundNum = 0; roundNum < 12; roundNum++) {
@@ -59,9 +60,9 @@ const runSingleGameOfGermanBridge = async (
         );
         roundResults.push(singleRoundResultLog);
         startingPlayer = (startingPlayer + 1) % numberOfPlayers;
-        gameScore = gameScore.map(
-            (score, index) => score + singleRoundResultLog.roundScore[index]
-        );
+        for (let key in singleRoundResultLog.roundScore) {
+            gameScore[key] += singleRoundResultLog.roundScore[key];
+        }
     }
     return {
         roundResults: roundResults,
@@ -75,8 +76,8 @@ const playRound = async (
     startingPlayer: number,
     roundNumber: number
 ): Promise<RoundResults> => {
-    let scores: number[] = [];
-    players.forEach((_player) => scores.push(0));
+    let scores: PlayerScores = {};
+    players.forEach((player) => scores[player.playerId] = 0);
     let deck = new JudgementDeck();
     // Deal out cards to each player
     // Get All Player Predictions for the round
@@ -148,10 +149,11 @@ const playRound = async (
             startingPlayer,
             players.length
         );
-        curHandsMade[handWinnerInfo.player]++;
+        const handWinningPlayer = players[handWinnerInfo.player];
+        curHandsMade[handWinningPlayer.playerId]++;
         startingPlayer = handWinnerInfo.player;
         handWinnerLog.push({
-            handWinnerPlayerId: handWinnerInfo.player,
+            handWinnerPlayerId: handWinningPlayer.playerId,
             handWinnerCard: handWinnerInfo.card,
             handsCardsInOrder: cardsPlayedInOrder,
         });

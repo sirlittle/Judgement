@@ -1,6 +1,6 @@
 {
   "name": "judgement_utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A common set of utilities to be used across bots and the actual game server",
   "main": "index.js",
   "scripts": {

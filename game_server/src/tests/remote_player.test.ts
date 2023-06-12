@@ -7,7 +7,7 @@ import { describe, expect, test } from '@jest/globals';
 describe('Remote player can instantiate game', () => {
     test('Remote player can instantiate game', async () => {
         const url = 'http://localhost:4000';
-        const remotePlayer = new RemotePlayer(url, 0, 'testGame');
+        const remotePlayer = new RemotePlayer(url, '1', 'testGame');
 
         await remotePlayer.instantiateGame();
         await remotePlayer.setDealtCards([
