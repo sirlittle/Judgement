@@ -1,4 +1,4 @@
-import { GameResult } from "../../game_server/src/objects/logs";
+import { GameResult } from "../types/game";
 import ScrollingTabs from "./ScrollingTabs";
 import { ScoreChart } from "./ScoreChart";
 export function GameResults({data}) {

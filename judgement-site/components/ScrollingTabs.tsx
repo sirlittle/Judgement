@@ -2,7 +2,7 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { GameResult } from "../../game_server/src/objects/logs";
+import { GameResult } from "../types/game";
 import { RoundResultPage } from "./RoundResultPage";
 
 export default function ScrollableTabData(props: { gameResults: GameResult }) {

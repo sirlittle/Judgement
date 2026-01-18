@@ -1,4 +1,4 @@
-import { RoundResults } from "../../game_server/src/objects/logs";
+import { RoundResults } from "../types/game";
 import { ScoreChart } from "./ScoreChart";
 
 export function RoundResultPage(props: { roundResults: RoundResults }) {

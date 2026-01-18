@@ -4,9 +4,10 @@ import styles from '../styles/Home.module.css'
 import { Hand } from '../components/Hand';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
 export default function MainPage() {
-  // const { data, error } = useSWR('https://localhost:8080', fetcher)
-  const { data, error } = useSWR("http://localhost:8080/demoHand", fetcher);
+  const { data, error } = useSWR(`${API_URL}/demoHand`, fetcher);
   if (error) {
     return <div>{JSON.stringify(error)}</div>;
   }

@@ -20,6 +20,7 @@
     "victory": "^36.5.3"
   },
   "devDependencies": {
+    "@next/swc-wasm-nodejs": "^12.2.2",
     "@types/node": "^18.0.6",
     "@types/react": "^18.0.15",
     "eslint": "8.20.0",
